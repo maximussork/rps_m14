@@ -6,15 +6,19 @@ root = Tk()
 username_window = Toplevel()
 rules_window = Toplevel()
 highscore_window = Toplevel()
+choose_game_window = Toplevel()
 main_game_window = Toplevel()
-
 
 #Hided Windows
 root.withdraw()
 rules_window.withdraw()
 highscore_window.withdraw()
-
-
+choose_game_window.withdraw()
+main_game_window.withdraw()
+#var
+rock = 1
+paper = 3
+scis = 9
 
 #Func
 def username_button_func(): # Hides username_window and shows rules_window
@@ -22,16 +26,31 @@ def username_button_func(): # Hides username_window and shows rules_window
     rules_window.deiconify()
 def rules_window_button_func(): #Hides rules_window and shows root
     rules_window.withdraw()
+    rules_window.grab_release()
     root.deiconify()
 def root_to_rules_window_func():
-    root.withdraw() # Quizas quitar y poner un grabset
+    #root.withdraw() # Quizas quitar y poner un grabset
     rules_window.deiconify()
+    rules_window.grab_set()
 def root_show_highscore_window_func():
     highscore_window.deiconify()
     highscore_window.grab_set()
 def highscore_window_close():
     highscore_window.withdraw()
     highscore_window.grab_release()
+def play():
+    root.withdraw()
+    choose_game_window.deiconify()
+def choose():
+    choose_game_window.withdraw()
+    main_game_window.deiconify()
+def rps():
+    userinput =1
+    machineinput = "random"
+    sumchoice = userinput + machineinput
+    if sumchoice == 2 or 6 or 18:
+        print("Tie")
+
 
 
 #username variable string
@@ -44,7 +63,6 @@ if 1:
 """
 
 
-#Miau
 #Parametros
 #root
 root.geometry('400x400')
@@ -63,6 +81,7 @@ root_button = Button(
     root,
     text = "PLAY",
     font = ("Opensans 25 bold"),
+    command = play
 )
 root_user_var = Label(
     root,
@@ -134,11 +153,49 @@ highscore_window_scores= Label(
 )
 highscore_window_button = Button( #Puede eliminarse y esperar que el usuario cierre la pestaña de forma normal
     highscore_window,
-    text = "CLOSE",
+    text = "pla",
     font = ("Opensans 10 bold"),
     command = highscore_window_close
 )
-
+#choose_game_window
+choose_game_window.geometry('200x200')
+choose_game_window.title("Rock Python Scissors ")
+choose_game_window_label = Label(
+    choose_game_window,
+    text="CHOOSE",
+    font = ("Opensans 15 bold")
+)
+choose_game_window_button_rock = Radiobutton(
+    choose_game_window,
+    value= 1 ,
+    text = "R",
+    font = ("Opensans 10")
+)
+choose_game_window_button_paper = Radiobutton(
+    choose_game_window,
+    value= 2 ,
+    text = "P",
+    font = ("Opensans 10")
+)
+choose_game_window_button_scissors = Radiobutton(
+    choose_game_window,
+    value = 3,
+    text = "S",
+    font = ("Opensans 10")
+)
+choose_game_window_button_confirm = Button(
+    choose_game_window,
+    text = "CONFIRM",
+    font = ("Opensans 15 bold"),
+    command = choose
+)
+#main_game_window
+main_game_window.geometry("400x400")
+main_game_window.title("Rock Python Scissors")
+main_game_window_label = Label(
+    main_game_window,
+    text="PLACEHOLDER COMEBACK LATER"
+)
 
 #Packing
 #root_pack
@@ -160,5 +217,13 @@ rules_window_button.pack()
 highscore_window_label.pack()
 highscore_window_scores.pack()
 highscore_window_button.pack()
+#choose_game_window_pack
+choose_game_window_label.pack()
+choose_game_window_button_rock.pack()
+choose_game_window_button_paper.pack()
+choose_game_window_button_scissors.pack()
+choose_game_window_button_confirm.pack()
+#main_game_window_pack
+main_game_window_label.pack()
 #INICIAR
 root.mainloop()
