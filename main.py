@@ -1,4 +1,5 @@
 from tkinter import *
+import random
 # App main GUI
 # Windows
 
@@ -7,6 +8,7 @@ username_window = Toplevel()
 rules_window = Toplevel()
 highscore_window = Toplevel()
 choose_game_window = Toplevel()
+choose_game_window_popout = Toplevel()
 main_game_window = Toplevel()
 
 #Hided Windows
@@ -14,11 +16,13 @@ root.withdraw()
 rules_window.withdraw()
 highscore_window.withdraw()
 choose_game_window.withdraw()
+choose_game_window_popout.withdraw()
 main_game_window.withdraw()
 #var
 rock = 1
 paper = 3
 scis = 9
+radio = IntVar()
 
 #Func
 def username_button_func(): # Hides username_window and shows rules_window
@@ -42,16 +46,29 @@ def play():
     root.withdraw()
     choose_game_window.deiconify()
 def choose():
-    choose_game_window.withdraw()
-    main_game_window.deiconify()
+    value = radio.get()
+    if value == 0:
+        choose_game_window_popout.deiconify()
+    else:
+        choose_game_window.withdraw()
+        main_game_window.deiconify()
+        if value == 1:
+            main_game_window_rock.pack()
+        elif value == 3:
+            main_game_window_paper.pack()
+        elif value == 9:
+            main_game_window_scis.pack()
+
 def rps():
-    userinput =1
-    machineinput = "random"
-    sumchoice = userinput + machineinput
-    if sumchoice == 2 or 6 or 18:
+    user_input = radio.get()
+    possible_choice = [1,3,9]
+    machine_input = random.choice(possible_choice)
+
+    sum_choice = user_input + machine_input
+    if sum_choice == 2 or 6 or 18:
         print("Tie")
-
-
+    elif sum_choice == 4:
+        pass
 
 #username variable string
 var_username = StringVar()
@@ -167,19 +184,22 @@ choose_game_window_label = Label(
 )
 choose_game_window_button_rock = Radiobutton(
     choose_game_window,
+    variable= radio,
     value= 1 ,
     text = "R",
     font = ("Opensans 10")
 )
 choose_game_window_button_paper = Radiobutton(
     choose_game_window,
-    value= 2 ,
+    variable=radio,
+    value= 3 ,
     text = "P",
     font = ("Opensans 10")
 )
 choose_game_window_button_scissors = Radiobutton(
     choose_game_window,
-    value = 3,
+    variable=radio,
+    value = 9,
     text = "S",
     font = ("Opensans 10")
 )
@@ -196,6 +216,39 @@ main_game_window_label = Label(
     main_game_window,
     text="PLACEHOLDER COMEBACK LATER"
 )
+
+main_game_window_streak_label = Label(
+    main_game_window,
+    text = "Streak:"
+)
+
+main_game_window_highscore_label = Label(
+    main_game_window,
+    text = "Highscore: "
+)
+
+main_game_window_currentime_label = Label( #Desde la última jugada
+    main_game_window,
+    text = "Placeholdertime"
+)
+main_game_window_totaltime_label = Label( #Desde inicio de la partida
+    main_game_window,
+    text = "Such time"
+)
+
+main_game_window_rock = Label(
+    main_game_window,
+    text= "Roca"
+)
+main_game_window_paper = Label(
+    main_game_window,
+    text = "papel"
+)
+main_game_window_scis = Label(
+    main_game_window,
+    text = "Tijera"
+)
+
 
 #Packing
 #root_pack
@@ -225,5 +278,9 @@ choose_game_window_button_scissors.pack()
 choose_game_window_button_confirm.pack()
 #main_game_window_pack
 main_game_window_label.pack()
+main_game_window_streak_label.place(x= 75, y=75)
+main_game_window_highscore_label.place(x= 150, y=75)
+main_game_window_currentime_label.place(x= 150, y= 100)
+main_game_window_totaltime_label.place(x= 175 , y=115)
 #INICIAR
 root.mainloop()
