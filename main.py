@@ -1,5 +1,14 @@
 from tkinter import *
 import random
+"""
+a = paper
+b = rock
+c = scissors
+Use match statement:
+tie = ["aa", "bb", "cc"]
+win = ["ba", "ac", "cb"]
+lose = ["ab", "bc", "ca"]
+"""
 # App main GUI
 # Windows
 
@@ -19,9 +28,7 @@ choose_game_window.withdraw()
 choose_game_window_popout.withdraw()
 main_game_window.withdraw()
 #var
-rock = 1
-paper = 3
-scis = 9
+choose_list = ["a", "b", "c"]
 radio = IntVar()
 
 #Func
@@ -47,28 +54,34 @@ def play():
     choose_game_window.deiconify()
 def choose():
     value = radio.get()
-    if value == 0:
+    if value not in choose_list:
         choose_game_window_popout.deiconify()
     else:
         choose_game_window.withdraw()
         main_game_window.deiconify()
-        if value == 1:
+        if value == choose_list[0]:
             main_game_window_rock.pack()
-        elif value == 3:
+        elif value == choose_list[1]:
             main_game_window_paper.pack()
-        elif value == 9:
+        elif value == choose_list[2]:
             main_game_window_scis.pack()
 
-def rps():
+def rps(): #Try match statement maybe?
+    game_conditions = [["aa", "bb", "cc"], ["ba", "ac", "cb"], ["ab", "bc", "ca"]]
     user_input = radio.get()
-    possible_choice = [1,3,9]
-    machine_input = random.choice(possible_choice)
+    machine_input = random.choice(choose_list)
 
     sum_choice = user_input + machine_input
-    if sum_choice == 2 or 6 or 18:
+
+    if sum_choice in game_conditions[0]:
         print("Tie")
-    elif sum_choice == 4:
-        pass
+    elif sum_choice in game_conditions[1]:
+        print("Win")
+    else:
+        print("Lose")
+
+
+
 
 #username variable string
 var_username = StringVar()
@@ -185,22 +198,22 @@ choose_game_window_label = Label(
 choose_game_window_button_rock = Radiobutton(
     choose_game_window,
     variable= radio,
-    value= 1 ,
+    value= choose_list[0] ,
     text = "R",
     font = ("Opensans 10")
 )
 choose_game_window_button_paper = Radiobutton(
     choose_game_window,
     variable=radio,
-    value= 3 ,
+    value= choose_list[1] ,
     text = "P",
     font = ("Opensans 10")
 )
 choose_game_window_button_scissors = Radiobutton(
     choose_game_window,
     variable=radio,
-    value = 9,
-    text = "S",
+    value = choose_list[2],
+    text = "Scissors",
     font = ("Opensans 10")
 )
 choose_game_window_button_confirm = Button(
