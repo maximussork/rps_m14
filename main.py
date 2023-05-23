@@ -19,7 +19,7 @@ highscore_window = Toplevel()
 choose_game_window = Toplevel()
 choose_game_window_popout = Toplevel()
 main_game_window = Toplevel()
-
+end_window_popout = Toplevel()
 #Hided Windows
 root.withdraw()
 rules_window.withdraw()
@@ -27,9 +27,13 @@ highscore_window.withdraw()
 choose_game_window.withdraw()
 choose_game_window_popout.withdraw()
 main_game_window.withdraw()
+end_window_popout.withdraw()
 #var
 choose_list = ["a", "b", "c"]
-radio = IntVar()
+radio = StringVar()
+time = 0
+highscore_content = []
+streak = IntVar(value=0)
 
 #Func
 def username_button_func(): # Hides username_window and shows rules_window
@@ -44,43 +48,80 @@ def root_to_rules_window_func():
     rules_window.deiconify()
     rules_window.grab_set()
 def root_show_highscore_window_func():
+    highscore_read()
     highscore_window.deiconify()
     highscore_window.grab_set()
 def highscore_window_close():
     highscore_window.withdraw()
     highscore_window.grab_release()
+def choose_game_window_popout_close():
+    choose_game_window_popout.grab_release()
+    choose_game_window_popout.withdraw()
 def play():
     root.withdraw()
     choose_game_window.deiconify()
 def choose():
     value = radio.get()
+    print('choose()  value:',value)
     if value not in choose_list:
         choose_game_window_popout.deiconify()
+        choose_game_window_popout.grab_set()
     else:
         choose_game_window.withdraw()
-        main_game_window.deiconify()
+        print('choose()  value:', value)
+        print("choose() list", choose_list)
         if value == choose_list[0]:
             main_game_window_rock.pack()
         elif value == choose_list[1]:
             main_game_window_paper.pack()
         elif value == choose_list[2]:
             main_game_window_scis.pack()
+        rps()
 
+def choose_machine():
+    machine_input = random.choice(choose_list)
+    if machine_input == choose_list[0]:
+        main_game_window_rock_machine.pack()
+    elif machine_input == choose_list[1]:
+        main_game_window_paper_machine.pack()
+    elif machine_input == choose_list[2]:
+        main_game_window_scis_machine.pack()
+    return machine_input
 def rps(): #Try match statement maybe?
     game_conditions = [["aa", "bb", "cc"], ["ba", "ac", "cb"], ["ab", "bc", "ca"]]
     user_input = radio.get()
-    machine_input = random.choice(choose_list)
-
-    sum_choice = user_input + machine_input
-
+    main_game_window.deiconify()
+    sum_choice = user_input + choose_machine()
+    main_game_window.after(1000, timer, time)
+    print('sum_choice',sum_choice)
     if sum_choice in game_conditions[0]:
+        choose_game_window.deiconify()
+        highscore_write()
         print("Tie")
+        streak.set(0)
     elif sum_choice in game_conditions[1]:
-        print("Win")
+        choose_game_window.deiconify()
+        print("Ganas")
+        streak.set(streak.get()+1)
     else:
-        print("Lose")
+        main_game_window.withdraw()
+        root.deiconify()
+        highscore_write()
+        print("Pierdes")
+        streak.set(0)
 
+def timer(time):
+    main_game_window_timer_label["text"] = time
+    if time >= 0:
+        main_game_window.after(1000, timer, time+1)
 
+def highscore_write():
+    if streak.get() > 0:
+        with open("highscore", "w") as f:
+            f.write(str(var_username.get()) + " " + str(streak.get()) + "\n")
+def highscore_read():
+    with open("highscore", "r") as f:
+        highscore_content = f.readlines()
 
 
 #username variable string
@@ -178,7 +219,7 @@ highscore_window_label = Label(
 )
 highscore_window_scores= Label(
     highscore_window,
-    text="PLACEHOLDER SCORES",
+    text=str(highscore_content[0:]),
     font = ("Opensans 10")
 )
 highscore_window_button = Button( #Puede eliminarse y esperar que el usuario cierre la pestaña de forma normal
@@ -198,21 +239,21 @@ choose_game_window_label = Label(
 choose_game_window_button_rock = Radiobutton(
     choose_game_window,
     variable= radio,
-    value= choose_list[0] ,
+    value= "a" ,
     text = "R",
     font = ("Opensans 10")
 )
 choose_game_window_button_paper = Radiobutton(
     choose_game_window,
     variable=radio,
-    value= choose_list[1] ,
+    value= "b" ,
     text = "P",
     font = ("Opensans 10")
 )
 choose_game_window_button_scissors = Radiobutton(
     choose_game_window,
     variable=radio,
-    value = choose_list[2],
+    value = "c",
     text = "Scissors",
     font = ("Opensans 10")
 )
@@ -221,6 +262,17 @@ choose_game_window_button_confirm = Button(
     text = "CONFIRM",
     font = ("Opensans 15 bold"),
     command = choose
+)
+#choose_game_window_popout
+choose_game_window_popout.geometry("400x125")
+choose_game_window_popout_label = Label(
+    choose_game_window_popout,
+    text = "Please choose an option"
+)
+choose_game_window_popout_button = Button(
+    choose_game_window_popout,
+    text = "OK",
+    command = choose_game_window_popout_close
 )
 #main_game_window
 main_game_window.geometry("400x400")
@@ -232,7 +284,8 @@ main_game_window_label = Label(
 
 main_game_window_streak_label = Label(
     main_game_window,
-    text = "Streak:"
+    text="streak:",
+    textvariable=streak
 )
 
 main_game_window_highscore_label = Label(
@@ -251,18 +304,32 @@ main_game_window_totaltime_label = Label( #Desde inicio de la partida
 
 main_game_window_rock = Label(
     main_game_window,
-    text= "Roca"
+    text= "Rock"
 )
 main_game_window_paper = Label(
     main_game_window,
-    text = "papel"
+    text = "Paper"
 )
 main_game_window_scis = Label(
     main_game_window,
-    text = "Tijera"
+    text = "Scissors"
 )
-
-
+main_game_window_rock_machine = Label(
+    main_game_window,
+    text= "Rock"
+)
+main_game_window_paper_machine = Label(
+    main_game_window,
+    text = "Paper"
+)
+main_game_window_scis_machine = Label(
+    main_game_window,
+    text = "Scissors"
+)
+main_game_window_timer_label = Label(
+    main_game_window,
+    text = time
+)
 #Packing
 #root_pack
 root_label.pack()
@@ -289,11 +356,15 @@ choose_game_window_button_rock.pack()
 choose_game_window_button_paper.pack()
 choose_game_window_button_scissors.pack()
 choose_game_window_button_confirm.pack()
+#choose_game_window_popout_pack
+choose_game_window_popout_label.pack()
+choose_game_window_popout_button.pack()
 #main_game_window_pack
 main_game_window_label.pack()
 main_game_window_streak_label.place(x= 75, y=75)
 main_game_window_highscore_label.place(x= 150, y=75)
 main_game_window_currentime_label.place(x= 150, y= 100)
 main_game_window_totaltime_label.place(x= 175 , y=115)
+main_game_window_timer_label.pack()
 #INICIAR
 root.mainloop()
